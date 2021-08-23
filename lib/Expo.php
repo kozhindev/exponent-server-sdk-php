@@ -20,65 +20,26 @@ class Expo
      */
     private $ch = null;
 
-    /**
-     * The registrar instance that manages the tokens
-     *
-     * @var ExpoRegistrar
-     */
-    private $registrar;
-    
     /** 
      * @var string|null
      */
     private $accessToken = null;
 
     /**
+     * @var bool
+     */
+    private $debug = false;
+
+    /**
      * Expo constructor.
      *
-     * @param ExpoRegistrar $expoRegistrar
+     * @param bool $debug
      */
-    public function __construct(ExpoRegistrar $expoRegistrar)
+    public function __construct(bool $debug)
     {
-        $this->registrar = $expoRegistrar;
+        $this->debug = $debug;
     }
 
-    /**
-     * Creates an instance of this class with the normal setup
-     * It uses the ExpoFileDriver as the repository.
-     *
-     * @return Expo
-     */
-    public static function normalSetup()
-    {
-        return new self(new ExpoRegistrar(new ExpoFileDriver()));
-    }
-
-    /**
-     * Subscribes a given interest to the Expo Push Notifications.
-     *
-     * @param $interest
-     * @param $token
-     *
-     * @return string
-     */
-    public function subscribe($interest, $token)
-    {
-        return $this->registrar->registerInterest($interest, $token);
-    }
-
-    /**
-     * Unsubscribes a given interest from the Expo Push Notifications.
-     *
-     * @param $interest
-     * @param $token
-     *
-     * @return bool
-     */
-    public function unsubscribe($interest, $token = null)
-    {
-        return $this->registrar->removeInterest($interest, $token);
-    }
-    
     /**
      * @param string|null $accessToken
      */
@@ -91,25 +52,21 @@ class Expo
      *
      * @param array $interests
      * @param array $data
-     * @param bool $debug
      *
      * @throws ExpoException
      * @throws UnexpectedResponseException
      *
      * @return array|bool
      */
-    public function notify(array $interests, array $data, $debug = false)
+    public function notify(array $tokens, array $data)
     {
         $postData = [];
 
-        if (count($interests) == 0) {
-            throw new ExpoException('Interests array must not be empty.');
+        if (count($tokens) == 0) {
+            throw new ExpoException('Tokens array must not be empty.');
         }
 
-        // Gets the expo tokens for the interests
-        $recipients = $this->registrar->getInterests($interests);
-
-        foreach ($recipients as $token) {
+        foreach ($tokens as $token) {
             $postData[] = $data + ['to' => $token];
         }
 
@@ -120,7 +77,7 @@ class Expo
         $response = $this->executeCurl($ch);
 
         // If the notification failed completely, throw an exception with the details
-        if ($debug && $this->failedCompletely($response, $recipients)) {
+        if ($this->debug && $this->failedCompletely($response, $tokens)) {
             throw ExpoException::failedCompletelyException($response);
         }
 
