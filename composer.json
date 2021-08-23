@@ -1,13 +1,13 @@
 {
-    "name": "alymosul/exponent-server-sdk-php",
+    "name": "kozhindev/expo-server-sdk-php",
     "description": "Server-side library for working with Expo push notifications using PHP",
     "keywords": ["expo", "exponent", "push", "notifications"],
     "type": "library",
     "license": "MIT",
     "authors": [
         {
-            "name": "Aly Suleiman",
-            "email": "alymosul@gmail.com"
+            "name": "Denis Krylov",
+            "email": "krydenk@gmail.com"
         }
     ],
     "require": {
