@@ -10,7 +10,6 @@ composer require kozhindev/exponent-server-sdk-php
 ```php
     require_once __DIR__.'/vendor/autoload.php';
     
-    $channelName = 'news';
     $token = 'ExponentPushToken[unique]';
     
     $expo = new \ExponentPhpSDK\Expo();

@@ -35,7 +35,7 @@ class Expo
      *
      * @param bool $debug
      */
-    public function __construct(bool $debug)
+    public function __construct(bool $debug = false)
     {
         $this->debug = $debug;
     }
